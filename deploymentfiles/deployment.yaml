@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nestjs-deployment
-  namespace: genix
   labels:
     app: nestjs-app
 spec:

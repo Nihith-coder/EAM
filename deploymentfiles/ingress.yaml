@@ -2,7 +2,6 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: nestjs-ingress
-  namespace: genix  # Adjust namespace if necessary
   annotations:
     appgw.ingress.kubernetes.io/appgw-ssl-certificate: agw-cert
     appgw.ingress.kubernetes.io/backend-path-prefix: /eam/
