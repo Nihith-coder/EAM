@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: nestjs-ingress
   annotations:
-    appgw.ingress.kubernetes.io/appgw-ssl-certificate: agw-cert
+    appgw.ingress.kubernetes.io/appgw-ssl-certificate: <certificate>
     appgw.ingress.kubernetes.io/backend-path-prefix: /eam/
     appgw.ingress.kubernetes.io/request-timeout: "60"
     appgw.ingress.kubernetes.io/rewrite-target: /
@@ -11,7 +11,7 @@ metadata:
     kubernetes.io/ingress.class: azure/application-gateway  # AGIC Ingress class
 spec:
   rules:
-    - host: abilitynk22euwdevce.dev.abilityplatform.abb
+    - host: <baseurl>
       http:
         paths:
           - path: /eam/*
