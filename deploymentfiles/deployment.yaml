@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nestjs-deployment
+  namespace: genix
+  labels:
+    app: nestjs-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nestjs-app
+  template:
+    metadata:
+      labels:
+        app: nestjs-app
+    spec:
+      containers:
+        - name: nestjs-container
+          image: nihith791/eam:v1.1
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "production"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          securityContext:
+            privileged: false
+            runAsUser: 1001
+      serviceAccount: default
+      serviceAccountName: default

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nestjs-service
+  namespace: genix  # Adjust namespace if necessary
+spec:
+  selector:
+    app: nestjs-app  # This should match the label selector of your Pods
+  ports:
+    - protocol: TCP
+      port: 80  # Exposed service port
+      targetPort: 3000  # Port on which your NestJS app is running inside the container
+  type: ClusterIP  # Use LoadBalancer if you are using an external LoadBalancer
