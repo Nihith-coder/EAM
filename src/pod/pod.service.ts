@@ -40,7 +40,7 @@ export class PodService {
     try {
       const namespace_exist =
         this._namespace.getNamespace(namespace);
-      if (namespace_exist == null){
+      if (namespace_exist == null) {
         return null;
       }
       const result =
@@ -65,13 +65,19 @@ export class PodService {
     podName: string,
   ): Promise<k8s.V1Pod | any> {
     try {
-      //Namespace exist or not validation
-      const namespace_exist =
-        this._namespace.getNamespace(namespace);
-      if (namespace_exist == null){
-        return null;
+      // Namespace existence validation
+      const namespaceExist =
+        await this._namespace.getNamespace(
+          namespace,
+        );
+      if (!namespaceExist) {
+        throw new HttpException(
+          `Namespace ${namespace} does not exist`,
+          HttpStatus.NOT_FOUND,
+        );
       }
 
+      // Correctly call the deleteNamespacedPod method with the required object
       const result =
         await this.k8sApi.deleteNamespacedPod({
           name: podName,
@@ -82,10 +88,11 @@ export class PodService {
         `Pod ${podName} deleted successfully in namespace ${namespace}`,
       );
 
-      return result;
+      return result; // Return the V1Status directly
     } catch (err: any) {
+      // Log the entire error object for better debugging
       const errorMessage =
-        err?.body?.message ||
+        err?.response?.body?.message ||
         err?.message ||
         JSON.stringify(err) ||
         'Unknown error';

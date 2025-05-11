@@ -94,9 +94,12 @@ export class PodController {
   }
 
   @Delete(':namespace/pods/:podName')
-  @ApiOperation({
-    summary:
-      'Delete a pod by name in a namespace',
+  @ApiOperation({ summary: 'Delete a pod by name in a namespace' })
+  @ApiParam({
+    name: 'namespace',
+    description: 'The Kubernetes namespace containing the pod',
+    type: String,
+    required: true,
   })
   @ApiParam({
     name: 'podName',
@@ -106,9 +109,9 @@ export class PodController {
   })
   @ApiResponse({
     status: 200,
-    description: 'Pod deletion status returned',
+    description: 'Pod deleted successfully',
     type: String,
-    example: 'Pod deleted successfully',
+    example: 'Pod my-pod deleted successfully in namespace my-namespace',
   })
   @ApiResponse({
     status: 404,
@@ -118,23 +121,22 @@ export class PodController {
     status: 500,
     description: 'Internal server error',
   })
-
-  
   async deletePod(
     @Param('namespace') namespace: string,
     @Param('podName') podName: string,
-  ): Promise<any> {
-    const result =
-      await this._podService.deletePod(
-        namespace,
-        podName,
-      );
-    if (!result) {
-      throw new HttpException(
-        'Pod or namespace not found',
-        HttpStatus.NOT_FOUND,
-      );
+  ): Promise<string> {
+    try {
+      const result = await this._podService.deletePod(namespace, podName);
+      if (!result) {
+        throw new HttpException('Pod or namespace not found', HttpStatus.NOT_FOUND);
+      }
+      return `Pod ${podName} deleted successfully in namespace ${namespace}`;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      // Optional: log the error here if you have a logger in the controller
+      throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return `Pod ${podName} deleted successfully in namespace ${namespace}`;
   }
 }
