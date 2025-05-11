@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common';
 import { PodController } from './pod.controller';
 import { PodService } from './pod.service';
 import { CredsModule } from 'src/creds/creds.module';
+import { NamespaceModule } from 'src/namespace/namespace.module';
 
 @Module({
-  imports: [CredsModule],
+  imports: [CredsModule, NamespaceModule],
   controllers: [PodController],
   providers: [PodService]
 })

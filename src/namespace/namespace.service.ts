@@ -23,11 +23,11 @@ export class NamespaceService {
   }
 
   // List all the Namespaces
-  async listingnamespace(): Promise<string[]> {
+  async listingnamespace(): Promise<
+    k8s.V1Namespace[]
+  > {
     const res = await this.k8sApi.listNamespace();
-    return res.items.map(
-      (ns) => ns.metadata?.name ?? 'unknown',
-    );
+    return res.items.map((ns) => ns ?? 'unknown');
   }
 
   // Get the specified namespace

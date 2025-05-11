@@ -7,6 +7,7 @@ import {
 import * as k8s from '@kubernetes/client-node';
 import { credsService } from 'src/creds/creds.service';
 import { Logger } from '@nestjs/common';
+import { NamespaceService } from 'src/namespace/namespace.service';
 
 @Injectable()
 export class PodService {
@@ -16,6 +17,7 @@ export class PodService {
 
   constructor(
     private _credsService: credsService,
+    private _namespace: NamespaceService,
   ) {
     const res = this._credsService.loadconfig();
     this.kc = res.kc;
@@ -23,27 +25,31 @@ export class PodService {
   }
 
   //list all the pods
-  async listpods(): Promise<string[]> {
+  async listpods(): Promise<k8s.V1Pod[]> {
     const result =
       await this.k8sApi.listPodForAllNamespaces();
-    return (await result).items.map(
-      (pod) => pod.metadata?.name ?? 'Unknown',
+    return result.items.map(
+      (pod) => pod ?? 'Unknown',
     );
   }
 
   //list all the pods in a specific namespace
   async listpodsbyNamespace(
     namespace: string,
-  ): Promise<string[]> {
+  ): Promise<k8s.V1Pod[] | null> {
     try {
+      const namespace_exist =
+        this._namespace.getNamespace(namespace);
+      if (namespace_exist == null){
+        return null;
+      }
       const result =
         await this.k8sApi.listNamespacedPod({
           namespace,
         });
-      const podNames = result.items.map(
-        (pod) => pod.metadata?.name ?? 'unknown',
+      return result.items.map(
+        (pod) => pod ?? 'unknown',
       );
-      return podNames;
     } catch (err) {
       this.logger.error(
         `Failed to list pods in namespace ${namespace}`,
@@ -57,8 +63,15 @@ export class PodService {
   async deletePod(
     namespace: string,
     podName: string,
-  ): Promise<k8s.V1Status | any> {
+  ): Promise<k8s.V1Pod | any> {
     try {
+      //Namespace exist or not validation
+      const namespace_exist =
+        this._namespace.getNamespace(namespace);
+      if (namespace_exist == null){
+        return null;
+      }
+
       const result =
         await this.k8sApi.deleteNamespacedPod({
           name: podName,

@@ -67,7 +67,7 @@ export class PodController {
   })
   async listPodsByNamespace(
     @Param('namespace') namespace: string,
-  ): Promise<string[]> {
+  ): Promise<any> {
     try {
       const podNames =
         await this._podService.listpodsbyNamespace(
@@ -118,10 +118,12 @@ export class PodController {
     status: 500,
     description: 'Internal server error',
   })
+
+  
   async deletePod(
     @Param('namespace') namespace: string,
     @Param('podName') podName: string,
-  ): Promise<string> {
+  ): Promise<any> {
     const result =
       await this._podService.deletePod(
         namespace,

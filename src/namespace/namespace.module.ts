@@ -7,6 +7,6 @@ import { CredsModule } from 'src/creds/creds.module';
   imports: [CredsModule],
   controllers: [NamespaceController],
   providers: [NamespaceService],
-  exports: [NamespaceModule]
+  exports: [NamespaceService]
 })
 export class NamespaceModule {}
