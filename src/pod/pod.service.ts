@@ -13,7 +13,9 @@ import { NamespaceService } from 'src/namespace/namespace.service';
 export class PodService {
   private kc: k8s.KubeConfig;
   private k8sApi: k8s.CoreV1Api;
-  private logger: Logger;
+  private readonly logger = new Logger(
+    PodService.name,
+  );
 
   constructor(
     private _credsService: credsService,
@@ -63,7 +65,7 @@ export class PodService {
   async deletePod(
     namespace: string,
     podName: string,
-  ): Promise<k8s.V1Pod | any> {
+  ): Promise<any> {
     try {
       // Namespace existence validation
       const namespaceExist =
@@ -83,13 +85,18 @@ export class PodService {
           name: podName,
           namespace: namespace,
         });
+      // console.log(result.status);
 
       this.logger.log(
         `Pod ${podName} deleted successfully in namespace ${namespace}`,
       );
 
-      return result; // Return the V1Status directly
+      var res = `Pod ${podName} deleted successfully in namespace ${namespace}`;
+
+      return res; // Return the V1Status directly
     } catch (err: any) {
+      console.log(3);
+      console.log(err);
       // Log the entire error object for better debugging
       const errorMessage =
         err?.response?.body?.message ||

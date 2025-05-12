@@ -126,17 +126,21 @@ export class PodController {
     @Param('podName') podName: string,
   ): Promise<string> {
     try {
+      console.log(1);
       const result = await this._podService.deletePod(namespace, podName);
+      console.log(result);
+      
       if (!result) {
         throw new HttpException('Pod or namespace not found', HttpStatus.NOT_FOUND);
       }
       return `Pod ${podName} deleted successfully in namespace ${namespace}`;
     } catch (error) {
+      console.log(error);
       if (error instanceof HttpException) {
         throw error;
       }
       // Optional: log the error here if you have a logger in the controller
-      throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Internal server error ', HttpStatus.INTERNAL_SERVER_ERROR, error);
     }
   }
 }
