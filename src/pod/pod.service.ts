@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   Body,
   HttpException,
@@ -114,4 +115,118 @@ export class PodService {
       );
     }
   }
+
+  // read the pod
+  async getpoddetails(
+    podName: string,
+    namespace: string,
+  ): Promise<k8s.V1Pod | any> {
+    try {
+      const namespaceexist =
+        await this._namespace.getNamespace(
+          namespace,
+        );
+      if (namespaceexist != null) {
+        const podcore: k8s.CoreV1ApiReadNamespacedPodRequest =
+          {
+            name: podName, namespace: namespace,
+          };
+        const poddetails = await this.k8sApi.readNamespacedPod(
+            podcore,
+          );
+
+        return poddetails;
+      } else {
+        return 'Namespace not exist';
+      }
+    } catch (err: any) {
+      // Log the entire error object for better debugging
+      this.logger.log(err);
+      // return (err);
+      return null;
+    }
+  }
+
+  // retrive the pod status
+  async podstatus (
+    podName: string,
+    namespace: string,
+  ) : Promise<any> {
+    try {
+      const namespaceexist = await this._namespace.getNamespace( namespace);
+      if (namespaceexist != null) {
+        const podexist = await this.getpoddetails(podName , namespace);
+        if (podexist != null)
+        {
+          const poddetails: k8s.CoreV1ApiReadNamespacedPodStatusRequest = {
+            name: podName,
+            namespace: namespace
+          }
+          const podstatus = await this.k8sApi.readNamespacedPodStatus(poddetails);
+
+          return podstatus;
+        }
+        else {
+          return podexist;
+        }
+      } else {
+        return namespaceexist;
+      }
+
+    } catch (err: any) {
+      this.logger.error(err);
+      return null;
+    }
+  }
+
+  // retrieve log the pod 
+  async logsofpod(
+    podName: string,
+    namespace: string
+  ) : Promise<any> {
+    try {
+      const poddetails: k8s.CoreV1ApiReadNamespacedPodLogRequest = {
+        name: podName , namespace: namespace
+      };
+      const podstatus = await this.podstatus(podName , namespace);
+      console.log(podstatus);
+      
+      if (await podstatus.status?.phase == "Running")
+      {
+        const logsofpod = this.k8sApi.readNamespacedPodLog(poddetails);
+
+        return logsofpod;
+      }
+      else {
+        const result = "pod details : ${podstatus} , unable to retrieve the logs";
+        return result;
+      }
+
+    } catch (err : any) {
+      this.logger.log(err);
+      return null;
+    }
+  }
+
+  // describe the pod
+  // async describepod (
+  //   podName: string,
+  //   namespace: string,
+  // ) : any {
+  //   try {
+  //       const podexist = this.getpoddetails(podName , namespace);
+  //       if (await podexist != null)
+  //       {
+  //         const poddetails: k8s.CoreV1ApiNamespacedPod
+  //       } else {
+  //         return podexist;
+  //       }
+
+  //   } catch (err : any) {
+  //     this.logger.log(err);
+  //     return null;
+  //   }
+  // }
+  
+
 }

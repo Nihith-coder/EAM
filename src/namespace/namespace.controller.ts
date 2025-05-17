@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   Controller,
   Get,
@@ -12,6 +13,7 @@ import {
 import { NamespaceService } from './namespace.service';
 import { createNameSpaceDto } from './dtofiles/create-namespace.dto';
 import {
+  ApiBody,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -70,6 +72,9 @@ export class NamespaceController {
     summary: 'create a namespace',
   })  
   @HttpCode(HttpStatus.CREATED) // 👈 Default for successful creation
+  @ApiBody(
+    { type: createNameSpaceDto }
+  )
   @ApiResponse({
     status: 201,
     description:

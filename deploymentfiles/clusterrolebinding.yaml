@@ -4,6 +4,7 @@ metadata:
   name: clusteraccess-binding
 subjects:
   - kind: ServiceAccount
+    namespace: <namespace>
     name: default
 roleRef:
   kind: ClusterRole

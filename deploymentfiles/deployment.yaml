@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: nestjs-container
-          image: nihith791/eam:v1.2.2
+          image: nihith791/eam:v1.2.6
           ports:
             - containerPort: 3000
           env:

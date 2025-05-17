@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   Controller,
   GatewayTimeoutException,
@@ -143,4 +144,83 @@ export class PodController {
       throw new HttpException('Internal server error ', HttpStatus.INTERNAL_SERVER_ERROR, error);
     }
   }
+
+  //read the pod details
+  @ApiParam({
+    name: 'namespace',
+    description: 'The Kubernetes namespace containing the pod',
+    type: String,
+    required: true,
+  })
+  @ApiParam({
+    name: 'podName',
+    description: 'The name of the pod ',
+    type: String,
+    required: true,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Pod or namespace not found',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error',
+  })
+  @Get(':namespace/:podName/description')
+  async poddetails (
+    @Param('namespace') namespace: string,
+    @Param('podName' ) podName: string,
+  ) : Promise<any> {
+    try {
+      return await this._podService.getpoddetails(podName , namespace);
+    }
+    catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      // Optional: log the error here if you have a logger in the controller
+      throw new HttpException('Internal server error ', HttpStatus.INTERNAL_SERVER_ERROR, error);
+    }
+  }
+
+  //logs the pod details
+  @ApiParam({
+    name: 'namespace',
+    description: 'The Kubernetes namespace containing the pod',
+    type: String,
+    required: true,
+  })
+  @ApiParam({
+    name: 'podName',
+    description: 'The name of the pod to retrive logs',
+    type: String,
+    required: true,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Pod or namespace not found',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error',
+  })
+  @Get(':namespace/:podName/logs')
+  async logsofpod (
+    @Param('namespace') namespace: string,
+    @Param('podName' ) podName: string,
+  ) : Promise<any> {
+    try {
+      return await this._podService.logsofpod(podName , namespace);
+    }
+    catch (error) {
+      console.log(error);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      // Optional: log the error here if you have a logger in the controller
+      throw new HttpException('Internal server error ', HttpStatus.INTERNAL_SERVER_ERROR, error);
+    }
+  }
+
 }
