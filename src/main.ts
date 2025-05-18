@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -24,7 +25,7 @@ async function bootstrap() {
     app,
     config,
   );
-  SwaggerModule.setup(basePath, app, document);
+  SwaggerModule.setup(`${basePath}/swagger/index.html`, app, document);
 
   app.useGlobalPipes(new ValidationPipe({
     transform: true, // important for default values to kick in

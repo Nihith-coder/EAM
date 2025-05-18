@@ -198,7 +198,7 @@ export class PodService {
         return logsofpod;
       }
       else {
-        const result = "pod details : ${podstatus} , unable to retrieve the logs";
+        const result = `pod details : ${podstatus} , unable to retrieve the logs`;
         return result;
       }
 
